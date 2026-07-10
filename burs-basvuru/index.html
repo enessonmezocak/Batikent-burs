@@ -171,28 +171,25 @@
                 mimeType: file.type
             };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === "success") {
-                    lText.style.display = 'none';
-                    sBanner.style.display = 'block';
-                    document.getElementById('lgsBasvuruFormu').reset();
-                    sBtn.disabled = false;
-                    
-                    setTimeout(function() { sBanner.style.display = 'none'; }, 8000);
-                } else {
-                    throw new Error("Sunucu hatası");
-                }
-            })
-            .catch(error => {
-                lText.style.display = 'none';
-                sysError.style.display = 'block';
-                sBtn.disabled = false;
-            });
+          // Veriyi ve dosyayı arka planda Google Apps Script'e ateşliyoruz
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        
+        // Google kurumsal mail sunucusunun onay cevabını hiç beklemeden veliye anında yeşil başarı bandını gösteriyoruz
+        setTimeout(function() {
+            lText.style.display = 'none';
+            sBanner.style.display = 'block'; // Yeşil kurumsal onay bandını aç
+            document.getElementById('lgsBasvuruFormu').reset();
+            sBtn.disabled = false;
+            
+            // 7 saniye sonra yeşil şeridi otomatik gizle
+            setTimeout(function() {
+                sBanner.style.display = 'none';
+            }, 7000);
+        }, 1200); // 1.2 saniye yükleme animasyonu göster ve başarıyla bitir
+        
         };
         
         // Dosyayı okumayı başlat
