@@ -1,0 +1,203 @@
+<style>
+    /* Kurumsal Birikim Okulları Başvuru Formu Tasarımı */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+    .lgs-container { max-width: 650px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; }
+    
+    /* Afiş ve Görsel Alanı */
+    .lgs-afis-alani { text-align: center; margin-bottom: 25px; }
+    .lgs-afis-alani img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    
+    /* Yönerge Alanı */
+    .lgs-yonerge { background-color: #e9ecef; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #007b5e; }
+    .lgs-yonerge h3 { margin-top: 0; color: #007b5e; font-size: 16px; margin-bottom: 10px; }
+    .lgs-yonerge p { margin: 5px 0; font-size: 14px; color: #444; font-weight: 500; }
+    
+    .lgs-title { color: #8A1538; text-align: center; font-size: 22px; margin-bottom: 25px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+    
+    .lgs-form-grup { margin-bottom: 18px; }
+    .lgs-form-grup label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #333; }
+    .lgs-form-grup input[type="text"], .lgs-form-grup input[type="email"], .lgs-form-grup input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
+    .lgs-form-grup input:focus { border-color: #8A1538; outline: none; }
+    
+    .lgs-btn { background-color: #007b5e; color: white; border: none; padding: 15px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: background 0.3s; }
+    .lgs-btn:hover { background-color: #005c46; }
+    .lgs-btn:disabled { background-color: #999; cursor: not-allowed; }
+    
+    .lgs-loading { display: none; text-align: center; color: #007b5e; font-weight: bold; margin-top: 15px; font-size: 15px; }
+    
+    /* İletişim / Adres Alanı */
+    .lgs-adres { margin-top: 30px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
+    .lgs-adres strong { color: #333; }
+
+    /* Uyarı Bantları */
+    .lgs-success-banner { display: none; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: 20px; font-size: 15px; }
+    .lgs-error-banner { display: none; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: 5px; font-size: 13px; margin-bottom: 15px; }
+</style>
+
+<div class="lgs-container">
+    
+    <!-- AFİŞ ALANI: Ömer görseli hazırlayınca "src" içindeki linki değiştireceksin -->
+    <div class="lgs-afis-alani">
+        <img id="kurumsalAfis" src="https://via.placeholder.com/600x250/007b5e/ffffff?text=Bat%C4%B1kent+Birikim+Tercih+G%C3%B6rseli+Buraya+Gelecek" alt="Tercihim Birikim">
+    </div>
+
+    <!-- MÜDÜRÜN İSTEDİĞİ YÖNERGE ALANI -->
+    <div class="lgs-yonerge">
+        <h3>Nasıl Başvururum?</h3>
+        <p>1. Aşağıdaki forma öğrenci ve veli bilgilerinizi eksiksiz giriniz.</p>
+        <p>2. "LGS Sonuç Belgesi" alanından PDF, JPG veya PNG formatındaki sonucunuzu seçiniz.</p>
+        <p>3. "Başvuruyu Gönder" butonuna tıklayarak kaydınızı tamamlayınız.</p>
+    </div>
+
+    <div class="lgs-title">Tercih ve Burs Başvuru Formu</div>
+    
+    <form id="lgsBasvuruFormu" onsubmit="window.lgsGonder(event)">
+        <div class="lgs-form-grup">
+            <label>Öğrencinin Adı</label>
+            <input type="text" id="ogrAd" required placeholder="Öğrencinin adını giriniz">
+        </div>
+        
+        <div class="lgs-form-grup">
+            <label>Öğrencinin Soyadı</label>
+            <input type="text" id="ogrSoyad" required placeholder="Öğrencinin soyadını giriniz">
+        </div>
+        
+        <div class="lgs-form-grup">
+            <label>İletişim Numarası (Veli)</label>
+            <input type="text" id="ogrTelefon" placeholder="05XX XXX XX XX" maxlength="14" oninput="window.lgsTelFormat(this)" required>
+            <div class="lgs-error-banner" id="lgsTelError">Lütfen telefon numarasını eksiksiz (11 hane) giriniz!</div>
+        </div>
+
+        <div class="lgs-form-grup">
+            <label>E-Posta Adresi</label>
+            <input type="email" id="ogrMail" required placeholder="ornek@mail.com">
+        </div>
+
+        <!-- YENİ: DOSYA YÜKLEME ALANI -->
+        <div class="lgs-form-grup">
+            <label>LGS Sonuç Belgesi (PDF, JPG, PNG)</label>
+            <input type="file" id="ogrBelge" accept=".pdf, image/png, image/jpeg" required>
+            <div class="lgs-error-banner" id="lgsFileError">Lütfen geçerli bir dosya seçin (Maksimum 5MB).</div>
+        </div>
+
+        <button type="submit" class="lgs-btn" id="lgsSubmitBtn">Başvuruyu Gönder</button>
+        <div class="lgs-loading" id="lgsLoadingText">Belgeniz yükleniyor ve verileriniz aktarılıyor, lütfen bekleyin...</div>
+        
+        <div class="lgs-success-banner" id="lgsSuccessBanner">Başvurunuz ve belgeniz başarıyla kaydedilmiştir. Teşekkür ederiz!</div>
+        <div class="lgs-error-banner" id="lgsSystemError" style="margin-top:20px;">Sistemsel bir hata oluştu, lütfen tekrar deneyin.</div>
+    </form>
+
+    <!-- KURUM ADRESİ -->
+    <div class="lgs-adres">
+        <strong>Batıkent Birikim Okulları / Fen Lisesi</strong><br>
+        İlkyerleşim, 1955. Sk. No:2, 06370 Yenimahalle/Ankara<br>
+        Tel: 0312 566 60 80
+    </div>
+
+</div>
+
+<script>
+    // 14 Haneli Telefon Formatlayıcı (Aynen korundu)
+    window.lgsTelFormat = function(input) {
+        var num = input.value.replace(/\D/g, ''); 
+        if (num.length > 11) num = num.substring(0, 11); 
+        
+        var formated = "";
+        if (num.length > 0) {
+            formated += num.substring(0, 4); 
+            if (num.length > 4) {
+                formated += " " + num.substring(4, 7); 
+                if (num.length > 7) {
+                    formated += " " + num.substring(7, 9); 
+                    if (num.length > 9) {
+                        formated += " " + num.substring(9, 11); 
+                    }
+                }
+            }
+        }
+        input.value = formated;
+        document.getElementById('lgsTelError').style.display = 'none';
+    };
+
+    window.lgsGonder = function(e) {
+        e.preventDefault();
+        
+        var telInput = document.getElementById('ogrTelefon');
+        var errBanner = document.getElementById('lgsTelError');
+        var fileError = document.getElementById('lgsFileError');
+        var sysError = document.getElementById('lgsSystemError');
+        
+        // Telefon Kontrolü
+        if (telInput.value.length < 14) {
+            errBanner.style.display = 'block';
+            telInput.focus();
+            return false;
+        }
+
+        var fileInput = document.getElementById('ogrBelge');
+        var file = fileInput.files[0];
+        
+        // Dosya Boyutu Kontrolü (Max 5MB)
+        if(file && file.size > 5 * 1024 * 1024) {
+            fileError.innerText = "Dosya boyutu çok büyük! Lütfen 5MB'dan küçük bir belge seçin.";
+            fileError.style.display = 'block';
+            return false;
+        }
+        
+        var sBtn = document.getElementById('lgsSubmitBtn');
+        var lText = document.getElementById('lgsLoadingText');
+        var sBanner = document.getElementById('lgsSuccessBanner');
+        
+        sBtn.disabled = true;
+        lText.style.display = 'block';
+        sBanner.style.display = 'none';
+        errBanner.style.display = 'none';
+        fileError.style.display = 'none';
+        sysError.style.display = 'none';
+
+        // Senin verdiğin yeni Google Apps Script Linki
+        var scriptURL = 'https://script.google.com/macros/s/AKfycbztqvFkdi0q2nOXSvJMaRKV-siYtoqpuNhmrBI75mK2pVT9HmYLgd6jspG6Rf8gNfhv/exec';
+
+        // Dosyayı okuyup Base64 formatına çeviren ve Google'a yollayan asıl mekanizma
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var payload = {
+                ad: document.getElementById('ogrAd').value,
+                soyad: document.getElementById('ogrSoyad').value,
+                telefon: telInput.value,
+                mail: document.getElementById('ogrMail').value,
+                fileData: event.target.result,
+                fileName: file.name,
+                mimeType: file.type
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === "success") {
+                    lText.style.display = 'none';
+                    sBanner.style.display = 'block';
+                    document.getElementById('lgsBasvuruFormu').reset();
+                    sBtn.disabled = false;
+                    
+                    setTimeout(function() { sBanner.style.display = 'none'; }, 8000);
+                } else {
+                    throw new Error("Sunucu hatası");
+                }
+            })
+            .catch(error => {
+                lText.style.display = 'none';
+                sysError.style.display = 'block';
+                sBtn.disabled = false;
+            });
+        };
+        
+        // Dosyayı okumayı başlat
+        if(file) {
+            reader.readAsDataURL(file);
+        }
+    };
+</script>
