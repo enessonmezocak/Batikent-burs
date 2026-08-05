@@ -1,0 +1,153 @@
+<style>
+    /* Kurumsal Birikim Okulları Son Kontenjanlar Form Tasarımı */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+    .lgs-container { max-width: 650px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; }
+    
+    /* Üst Afiş Alanı */
+    .lgs-afis-alani { text-align: center; margin-bottom: 25px; }
+    .lgs-afis-alani img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+    
+    /* Başlık */
+    .lgs-title { color: #8A1538; text-align: center; font-size: 22px; margin-bottom: 25px; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+    
+    /* Form Elemanları */
+    .lgs-form-grup { margin-bottom: 18px; }
+    .lgs-form-grup label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #333; }
+    .lgs-form-grup input[type="text"], .lgs-form-grup input[type="email"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
+    .lgs-form-grup input:focus { border-color: #8A1538; outline: none; }
+    
+    /* Buton */
+    .lgs-btn { background-color: #8A1538; color: white; border: none; padding: 15px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: background 0.3s; }
+    .lgs-btn:hover { background-color: #6a0f29; }
+    .lgs-btn:disabled { background-color: #999; cursor: not-allowed; }
+    
+    .lgs-loading { display: none; text-align: center; color: #8A1538; font-weight: bold; margin-top: 15px; font-size: 15px; }
+    
+    /* Bildirim Bantları */
+    .lgs-success-banner { display: none; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: 20px; font-size: 15px; }
+    .lgs-error-banner { display: none; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: 5px; font-size: 13px; margin-bottom: 15px; }
+
+    /* İletişim / Adres Alanı */
+    .lgs-adres { margin-top: 25px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
+    .lgs-adres strong { color: #333; }
+</style>
+
+<div class="lgs-container">
+    
+    <!-- ÜST AFİŞ ALANI -->
+    <div class="lgs-afis-alani">
+        <img id="kurumsalAfis" src="https://r.resimlink.com/bxZgu3LW.jpeg" alt="Batıkent Birikim 9. Sınıf Son Kontenjanlar">
+    </div>
+
+    <div class="lgs-title">9. Sınıf Son Kontenjan Ön Kayıt Formu</div>
+    
+    <form id="lgsBasvuruFormu" onsubmit="window.lgsGonder(event)">
+        <div class="lgs-form-grup">
+            <label>Öğrenci Adı Soyadı</label>
+            <input type="text" id="ogrAdSoyad" required placeholder="Öğrencinin adı ve soyadını giriniz">
+        </div>
+        
+        <div class="lgs-form-grup">
+            <label>Veli Adı</label>
+            <input type="text" id="veliAd" required placeholder="Velinin adını giriniz">
+        </div>
+        
+        <div class="lgs-form-grup">
+            <label>İletişim Numarası (Veli)</label>
+            <input type="text" id="ogrTelefon" placeholder="05XX XXX XX XX" maxlength="14" oninput="window.lgsTelFormat(this)" required>
+            <div class="lgs-error-banner" id="lgsTelError">Lütfen telefon numarasını eksiksiz (11 hane) giriniz!</div>
+        </div>
+
+        <div class="lgs-form-grup">
+            <label>E-Posta Adresi <span style="font-weight: normal; color: #777;">(İsteğe Bağlı)</span></label>
+            <input type="email" id="ogrMail" placeholder="ornek@mail.com">
+        </div>
+
+        <button type="submit" class="lgs-btn" id="lgsSubmitBtn">Ön Kayıt Başvurusunu Gönder</button>
+        <div class="lgs-loading" id="lgsLoadingText">Bilgileriniz aktarılıyor, lütfen bekleyin...</div>
+        
+        <div class="lgs-success-banner" id="lgsSuccessBanner">Ön kayıt başvurunuz başarıyla alınmıştır. En kısa sürede sizinle iletişime geçilecektir!</div>
+        <div class="lgs-error-banner" id="lgsSystemError" style="margin-top:20px;">Sistemsel bir hata oluştu, lütfen tekrar deneyin.</div>
+    </form>
+
+    <!-- KURUM ADRESİ -->
+    <div class="lgs-adres">
+        <strong>Batıkent Birikim Okulları / Fen Lisesi</strong><br>
+        İlkyerleşim, 1955. Sk. No:2, 06370 Yenimahalle/Ankara<br>
+        Tel: 0312 566 60 80
+    </div>
+
+</div>
+
+<script>
+    window.lgsTelFormat = function(input) {
+        var num = input.value.replace(/\D/g, ''); 
+        if (num.length > 11) num = num.substring(0, 11); 
+        
+        var formated = "";
+        if (num.length > 0) {
+            formated += num.substring(0, 4); 
+            if (num.length > 4) {
+                formated += " " + num.substring(4, 7); 
+                if (num.length > 7) {
+                    formated += " " + num.substring(7, 9); 
+                    if (num.length > 9) {
+                        formated += " " + num.substring(9, 11); 
+                    }
+                }
+            }
+        }
+        input.value = formated;
+        document.getElementById('lgsTelError').style.display = 'none';
+    };
+
+    window.lgsGonder = function(e) {
+        e.preventDefault();
+        
+        var telInput = document.getElementById('ogrTelefon');
+        var errBanner = document.getElementById('lgsTelError');
+        var sysError = document.getElementById('lgsSystemError');
+        
+        if (telInput.value.length < 14) {
+            errBanner.style.display = 'block';
+            telInput.focus();
+            return false;
+        }
+        
+        var sBtn = document.getElementById('lgsSubmitBtn');
+        var lText = document.getElementById('lgsLoadingText');
+        var sBanner = document.getElementById('lgsSuccessBanner');
+        
+        sBtn.disabled = true;
+        lText.style.display = 'block';
+        sBanner.style.display = 'none';
+        errBanner.style.display = 'none';
+        sysError.style.display = 'none';
+
+        // Apps Script'ten aldığın Web Uygulaması URL'sini buraya yapıştır
+        var scriptURL = 'https://script.google.com/macros/s/AKfycbwCPYU_GZ3FrQaaOoiSHPWCOnVJtQySaki5-hmhowO801qvaE7k9XKP3qNx-KqCyvQJ/exec';
+
+        var payload = {
+            ogrAdSoyad: document.getElementById('ogrAdSoyad').value,
+            veliAd: document.getElementById('veliAd').value,
+            telefon: telInput.value,
+            mail: document.getElementById('ogrMail').value || "Belirtilmedi"
+        };
+
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        
+        setTimeout(function() {
+            lText.style.display = 'none';
+            sBanner.style.display = 'block';
+            document.getElementById('lgsBasvuruFormu').reset();
+            sBtn.disabled = false;
+            
+            setTimeout(function() {
+                sBanner.style.display = 'none';
+            }, 7000);
+        }, 1000);
+    };
+</script>
